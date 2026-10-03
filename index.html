@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#123345">
+<title>ATALAYA by Lorenzo</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --mar:#123345; --carta:#E6EDF0; --papel:#F4F7F8; --sonda:#8FAFBE;
+  --patera:#B8662A; --taxi:#2F6AA8; --tinta:#14303E; --suave:#55707D;
+  --bajo:#3E8E5E; --medio:#D19A22; --alto:#C0432F;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --carta:#0F2633; --papel:#163242; --tinta:#E3ECF0; --suave:#9DB5C1; --sonda:#3E6070;
+  }
+}
+*,*::before,*::after{box-sizing:inherit}
+html,body{margin:0}
+body{background:var(--carta);color:var(--tinta);font:16px/1.45 "Source Sans 3",system-ui,sans-serif;min-height:100%}
+header{background:var(--mar);color:#F1F5F7;padding:18px 18px 22px;position:relative;overflow:hidden}
+header svg.costa{position:absolute;right:-10px;bottom:-4px;width:170px;opacity:.18}
+h1{font:700 2.4rem/1 "Barlow Condensed",sans-serif;letter-spacing:.06em;margin:0}
+h1 small{display:block;font:500 .95rem/1.3 "Source Sans 3",sans-serif;letter-spacing:0;opacity:.8;margin-top:4px}
+.estado{font-size:.85rem;opacity:.85;margin-top:10px}
+main{max-width:640px;margin:0 auto;padding:16px}
+.dias{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none}
+.dias::-webkit-scrollbar{display:none}
+.dia{flex:0 0 auto;min-width:74px;border:2px solid var(--sonda);background:var(--papel);color:var(--tinta);border-radius:10px;padding:8px 6px;text-align:center;cursor:pointer;font:inherit}
+.dia b{display:block;font:600 1.05rem/1.1 "Barlow Condensed",sans-serif}
+.dia span{font-size:.8rem;color:var(--suave)}
+.dia .mini{display:flex;justify-content:center;gap:4px;margin-top:5px}
+.dia .mini i{width:9px;height:9px;border-radius:50%;display:inline-block}
+.dia[aria-pressed="true"]{border-color:var(--mar);background:var(--mar);color:#fff}
+.dia[aria-pressed="true"] span{color:#cfdde4}
+.dia:focus-visible,button:focus-visible{outline:3px solid var(--medio);outline-offset:2px}
+.tabla{margin-top:16px;background:var(--papel);border-radius:14px;overflow:hidden;border:1px solid var(--sonda)}
+.tabla h2{font:600 1.35rem/1.2 "Barlow Condensed",sans-serif;margin:0;padding:14px 16px 4px}
+.tabla p.sub{margin:0;padding:0 16px 10px;color:var(--suave);font-size:.9rem}
+table{width:100%;border-collapse:collapse}
+th,td{padding:11px 14px;text-align:left}
+thead th{font:600 1rem "Barlow Condensed",sans-serif;letter-spacing:.03em;border-bottom:2px solid var(--sonda)}
+thead th.p{color:var(--patera)} thead th.t{color:var(--taxi)}
+tbody td{border-bottom:1px solid color-mix(in srgb,var(--sonda) 45%,transparent)}
+td.franja b{display:block;font-weight:600}
+td.franja span{font-size:.8rem;color:var(--suave)}
+td.num{font:700 1.55rem/1 "Barlow Condensed",sans-serif;width:28%}
+td.num small{display:block;height:5px;border-radius:3px;margin-top:6px;background:var(--sonda)}
+td.num small i{display:block;height:100%;border-radius:3px}
+tr.total td{background:var(--mar);color:#fff;border:none}
+tr.total td.num{font-size:2.1rem}
+tr.total td.franja span{color:#cfdde4}
+.factores{margin-top:14px;background:var(--papel);border-radius:14px;border:1px solid var(--sonda);padding:4px 16px 12px}
+.factores summary{cursor:pointer;font:600 1.1rem "Barlow Condensed",sans-serif;padding:10px 0}
+.factores table td{padding:7px 4px;font-size:.95rem}
+.factores table td:nth-child(n+2){text-align:right;font-weight:600}
+.leyenda{display:flex;gap:14px;flex-wrap:wrap;font-size:.82rem;color:var(--suave);margin:12px 2px 0}
+.leyenda i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.acciones{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.btn{border:none;border-radius:10px;padding:11px 16px;font:600 1rem "Source Sans 3",sans-serif;background:var(--mar);color:#fff;cursor:pointer}
+.btn.sec{background:transparent;color:var(--tinta);border:2px solid var(--sonda)}
+.nota{font-size:.82rem;color:var(--suave);margin-top:18px;line-height:1.5}
+.nota a{color:inherit}
+footer{text-align:center;font-size:.85rem;color:var(--suave);padding:18px 0 26px;font-weight:600}
+.toast{position:fixed;left:50%;top:calc(12px + env(safe-area-inset-top,0px));transform:translate(-50%,-150%);background:var(--mar);color:#fff;padding:11px 18px;border-radius:12px;box-shadow:0 6px 20px rgba(18,51,69,.35);transition:transform .35s;z-index:20;font-weight:600;max-width:92%}
+.toast.ver{transform:translate(-50%,0)}
+.cargando{padding:40px 16px;text-align:center;color:var(--suave)}
+@media (prefers-reduced-motion:reduce){.toast{transition:none}}
+</style>
+</head>
+<body>
+<header>
+  <svg class="costa" viewBox="0 0 200 120" aria-hidden="true"><path d="M0 90 Q30 70 55 82 T110 70 T160 78 T200 60 V120 H0Z" fill="#fff"/><path d="M0 104 Q40 92 80 100 T160 96 T200 90" stroke="#fff" stroke-width="3" fill="none"/></svg>
+  <h1>ATALAYA<small>Probabilidad de llegada por mar a la costa de Cartagena</small></h1>
+  <div class="estado" id="estado">Cargando previsión…</div>
+</header>
+<main>
+  <div class="dias" id="dias" role="group" aria-label="Día de llegada"></div>
+  <section class="tabla" id="tabla"><div class="cargando">Consultando oleaje y viento en la ruta…</div></section>
+  <details class="factores" id="factores" hidden><summary>Factores del día</summary><div id="factoresBody"></div></details>
+  <div class="leyenda">
+    <span><i style="background:var(--bajo)"></i>Baja (menos de 35 %)</span>
+    <span><i style="background:var(--medio)"></i>Media (35–65 %)</span>
+    <span><i style="background:var(--alto)"></i>Alta (más de 65 %)</span>
+  </div>
+  <div class="acciones">
+    <button class="btn" id="btnActualizar">Actualizar previsión</button>
+    <button class="btn sec" id="btnInstalar" hidden>Instalar en el móvil</button>
+  </div>
+  <p class="nota">Patera: embarcación tradicional, unas 20 h de travesía desde Argelia. Taxi: neumática con 3-4 motores a unos 30 nudos, unas 5 h, tolera más oleaje. La probabilidad de cada franja tiene en cuenta el mar que encontrarían durante toda la travesía hasta llegar a esa hora. Estimación orientativa, no oficial.</p>
+</main>
+<footer>ATALAYA by Lorenzo<br>© 2026 Lorenzo Moreno Villalba. Todos los derechos reservados.<br><span id="ver"></span></footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const APP_VERSION = '2026.10.03-9';
+
+/* ---------- Ruta Argelia - Cartagena (3 puntos) ---------- */
+const PUNTOS = [
+  {lat:36.20, lon:-0.40},  // salida, costa argelina (Orán-Mostaganem)
+  {lat:36.95, lon:-0.75},  // mitad de travesía
+  {lat:37.50, lon:-0.95}   // aproximación a Cartagena
+];
+const RUMBO = 345;          // rumbo aproximado hacia Cartagena (grados)
+const TIPOS = {
+  patera:{dur:20, olaOk:0.5, olaMax:1.5, vOk:8,  vMax:20, franja:[1.0,0.75,0.6,0.9]},
+  taxi:  {dur:5,  olaOk:1.0, olaMax:2.5, vOk:12, vMax:28, franja:[1.0,0.7,0.6,0.95]}
+};
+const TEMPORADA = [0.55,0.55,0.6,0.7,0.85,1,1,1,1,0.9,0.7,0.6]; // ene..dic
+const FRANJAS = [
+  {n:'Madrugada', h:'00:00 – 06:00', d:0},
+  {n:'Mañana',    h:'06:00 – 12:00', d:6},
+  {n:'Tarde',     h:'12:00 – 18:00', d:12},
+  {n:'Noche',     h:'18:00 – 24:00', d:18}
+];
+const DIAS_SEM = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+const MESES = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+
+let DATOS = null, RES = [], diaSel = 0;
+
+const $ = id => document.getElementById(id);
+function toast(msg, ms=3500){
+  const t=$('toast'); t.textContent=msg; t.classList.add('ver');
+  clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove('ver'), ms);
+}
+const clamp = (x,a,b)=>Math.max(a,Math.min(b,x));
+const lin = (v,ok,max)=> v<=ok ? 1 : v>=max ? 0 : 1-(v-ok)/(max-ok);
+function color(p){ return p>65?'var(--alto)':p>=35?'var(--medio)':'var(--bajo)'; }
+
+/* ---------- Datos ---------- */
+const MOD_OLA = ['meteofrance_wave','ecmwf_wam025','ncep_gfswave025'];
+const MOD_VTO = ['ecmwf_ifs025','meteofrance_seamless','icon_seamless','gfs_seamless'];
+function mediaSerie(arr){ // media hora a hora ignorando huecos
+  const n=Math.max(...arr.map(a=>a.length)); const out=[];
+  for(let i=0;i<n;i++){ const v=arr.map(a=>a[i]).filter(x=>x!=null&&!isNaN(x)); out.push(v.length?v.reduce((p,q)=>p+q,0)/v.length:null); }
+  return out;
+}
+function mediaViento(vels,dirs){ // media vectorial de velocidad y dirección
+  const n=Math.max(...vels.map(a=>a.length)); const V=[],D=[];
+  for(let i=0;i<n;i++){ let x=0,y=0,s=0,k=0;
+    for(let m=0;m<vels.length;m++){ const v=vels[m][i], d=dirs[m][i]; if(v==null||d==null) continue;
+      const r=d*Math.PI/180; x+=v*Math.sin(r); y+=v*Math.cos(r); s+=v; k++; }
+    if(!k){V.push(null);D.push(null);continue;}
+    V.push(s/k); D.push((Math.atan2(x,y)*180/Math.PI+360)%360); }
+  return [V,D];
+}
+async function pedir(url){ const r=await fetch(url); if(!r.ok) throw new Error(r.status); const j=await r.json(); return Array.isArray(j)?j:[j]; }
+async function cargar(){
+  $('estado').textContent='Cargando previsión…';
+  const lat=PUNTOS.map(p=>p.lat).join(','), lon=PUNTOS.map(p=>p.lon).join(',');
+  const comun=`latitude=${lat}&longitude=${lon}&past_days=1&forecast_days=7&timezone=Europe%2FMadrid`;
+  const base='https://marine-api.open-meteo.com/v1/marine?'+comun+'&hourly=wave_height';
+  const baseV='https://api.open-meteo.com/v1/forecast?'+comun+'&hourly=wind_speed_10m,wind_direction_10m&wind_speed_unit=kn';
+  let M=null, V=null, nO=0, nV=0;
+  // oleaje: varios modelos
+  try{
+    const r=await pedir(base+'&models='+MOD_OLA.join(','));
+    const horas=r[0].hourly.time;
+    const ola=r.map(p=>{ const series=MOD_OLA.map(m=>p.hourly['wave_height_'+m]).filter(a=>a&&a.some(v=>v!=null)); nO=Math.max(nO,series.length); return series.length?mediaSerie(series):null; });
+    if(ola.every(Boolean)) M={horas,ola};
+  }catch(e){}
+  if(!M){ const r=await pedir(base); M={horas:r[0].hourly.time, ola:r.map(p=>p.hourly.wave_height)}; nO=1; }
+  // viento: varios modelos
+  try{
+    const r=await pedir(baseV+'&models='+MOD_VTO.join(','));
+    const vel=[],dir=[];
+    for(const p of r){ const vs=[],ds=[];
+      for(const m of MOD_VTO){ const a=p.hourly['wind_speed_10m_'+m], b=p.hourly['wind_direction_10m_'+m]; if(a&&b&&a.some(v=>v!=null)){vs.push(a);ds.push(b);} }
+      nV=Math.max(nV,vs.length); if(!vs.length) throw new Error('sin viento'); const [mv,md]=mediaViento(vs,ds); vel.push(mv); dir.push(md); }
+    V={horas:r[0].hourly.time, vel, dir};
+  }catch(e){}
+  if(!V){ const r=await pedir(baseV); V={horas:r[0].hourly.time, vel:r.map(p=>p.hourly.wind_speed_10m), dir:r.map(p=>p.hourly.wind_direction_10m)}; nV=1; }
+  // alinear viento con las horas del oleaje
+  const pos={}; V.horas.forEach((h,i)=>pos[h]=i);
+  const al=a=>M.horas.map(h=>pos[h]!=null?a[pos[h]]:null);
+  DATOS={ horas:M.horas, ola:M.ola, vel:V.vel.map(al), dir:V.dir.map(al), nO, nV };
+  try{ localStorage.setItem('atalaya_datos', JSON.stringify({t:Date.now(), d:DATOS})); }catch(e){}
+}
+
+/* ---------- Cálculo ---------- */
+function vientoEfectivo(vel, dir){
+  // dir = de dónde viene el viento. Proa = viene del rumbo de la embarcación
+  const dif = (dir - RUMBO) * Math.PI/180;
+  const proa = Math.cos(dif);            // 1 = de cara, -1 = de popa
+  return vel * (proa>0 ? 1+0.5*proa : 1+0.3*proa);
+}
+function evaluaLlegada(idx, tipo){
+  const T = TIPOS[tipo], ini = idx - T.dur;
+  if(ini < 0) return null;
+  let olaMax=0, olaSum=0, vMax=0, vSum=0, n=0, vBrutoMax=0, dirMax=0;
+  for(let k=ini;k<=idx;k++){
+    const f=(k-ini)/T.dur, p=f<1/3?0:f<2/3?1:2;
+    const o=DATOS.ola[p][k], v=DATOS.vel[p][k], d=DATOS.dir[p][k];
+    if(o==null||v==null||d==null) continue;
+    const ve=vientoEfectivo(v,d);
+    olaMax=Math.max(olaMax,o); olaSum+=o;
+    if(ve>vMax){vMax=ve;} vSum+=ve;
+    if(v>vBrutoMax){vBrutoMax=v; dirMax=d;}
+    n++;
+  }
+  if(n < T.dur*0.6) return null;
+  const ola = 0.6*olaMax + 0.4*olaSum/n;
+  const vto = 0.6*vMax + 0.4*vSum/n;
+  const sOla = lin(ola, T.olaOk, T.olaMax);
+  const sVto = lin(vto, T.vOk, T.vMax);
+  const mar = Math.pow(sOla,0.6)*Math.pow(sVto,0.4);
+  return {mar, sOla, sVto, olaMax, vBrutoMax, dirMax};
+}
+function calcular(){
+  RES = [];
+  const porDia = {};
+  DATOS.horas.forEach((h,i)=>{ const d=h.slice(0,10); (porDia[d]=porDia[d]||[]).push(i); });
+  const hoy = new Date().toLocaleDateString('sv-SE',{timeZone:'Europe/Madrid'});
+  Object.keys(porDia).sort().forEach(fecha=>{
+    if(fecha < hoy) return;
+    const idxs = porDia[fecha]; if(idxs.length<24) return;
+    const mes = +fecha.slice(5,7)-1, temp = TEMPORADA[mes];
+    const dia = {fecha, temp, franjas:[], tipos:{}};
+    for(const tipo of ['patera','taxi']){
+      const T=TIPOS[tipo]; const fr=[]; let peorOla=0, peorV=0, dirV=0, sO=[], sV=[];
+      let valido=true;
+      FRANJAS.forEach((F,fi)=>{
+        let mejor=null;
+        for(let h=F.d; h<F.d+6; h++){
+          const r=evaluaLlegada(idxs[h], tipo); if(!r) continue;
+          const p=clamp(100*r.mar*temp*T.franja[fi],0,95);
+          if(!mejor||p>mejor.p) mejor={p,...r};
+          peorOla=Math.max(peorOla,r.olaMax);
+          if(r.vBrutoMax>peorV){peorV=r.vBrutoMax; dirV=r.dirMax;}
+          sO.push(r.sOla); sV.push(r.sVto);
+        }
+        if(!mejor) valido=false;
+        fr.push(mejor?Math.round(mejor.p):null);
+      });
+      const vals = fr.filter(v=>v!=null).sort((a,b)=>b-a);
+      const total = vals.length ? Math.round(Math.min(97, vals[0] + (100-vals[0])*0.25*((vals[1]||0)/100))) : null;
+      const media = a=>a.length?Math.round(100*a.reduce((x,y)=>x+y,0)/a.length):null;
+      dia.tipos[tipo]={fr, total, valido, peorOla, peorV, dirV, fOla:media(sO), fVto:media(sV)};
+    }
+    RES.push(dia);
+  });
+}
+
+/* ---------- Pintar ---------- */
+function rumboTxt(g){ return ['N','NE','E','SE','S','SO','O','NO'][Math.round(g/45)%8]; }
+function fechaTxt(f, largo){
+  const d=new Date(f+'T12:00:00');
+  return largo ? `${['domingo','lunes','martes','miércoles','jueves','viernes','sábado'][d.getDay()]} ${d.getDate()} de ${MESES[d.getMonth()]}` : `${d.getDate()} ${MESES[d.getMonth()]}`;
+}
+function celda(p){
+  if(p==null) return '<td class="num">–</td>';
+  return `<td class="num" style="color:${color(p)}">${p} %<small><i style="width:${p}%;background:${color(p)}"></i></small></td>`;
+}
+function pintarDias(){
+  const hoy = new Date().toLocaleDateString('sv-SE',{timeZone:'Europe/Madrid'});
+  $('dias').innerHTML = RES.map((d,i)=>{
+    const dt=new Date(d.fecha+'T12:00:00');
+    const nombre = d.fecha===hoy?'Hoy':DIAS_SEM[dt.getDay()];
+    const pp=d.tipos.patera.total, tt=d.tipos.taxi.total;
+    return `<button class="dia" aria-pressed="${i===diaSel}" data-i="${i}"><b>${nombre}</b><span>${fechaTxt(d.fecha)}</span>
+      <div class="mini"><i style="background:${pp==null?'var(--sonda)':color(pp)}" title="Patera"></i><i style="background:${tt==null?'var(--sonda)':color(tt)}" title="Taxi"></i></div></button>`;
+  }).join('');
+  $('dias').querySelectorAll('.dia').forEach(b=>b.onclick=()=>{diaSel=+b.dataset.i; pintar();});
+}
+function pintar(){
+  pintarDias();
+  const d=RES[diaSel]; if(!d){ $('tabla').innerHTML='<div class="cargando">Sin datos para ese día.</div>'; return; }
+  const P=d.tipos.patera, X=d.tipos.taxi;
+  let filas = FRANJAS.map((F,i)=>`<tr><td class="franja"><b>${F.n}</b><span>${F.h}</span></td>${celda(P.fr[i])}${celda(X.fr[i])}</tr>`).join('');
+  filas += `<tr class="total"><td class="franja"><b>Día completo</b><span>${fechaTxt(d.fecha)}</span></td>
+    <td class="num">${P.total==null?'–':P.total+' %'}</td><td class="num">${X.total==null?'–':X.total+' %'}</td></tr>`;
+  $('tabla').innerHTML = `<h2>Llegada el ${fechaTxt(d.fecha,true)}</h2>
+    <p class="sub">Probabilidad de que llegue una embarcación en cada franja horaria</p>
+    <table><thead><tr><th>Hora de llegada</th><th class="p">Patera</th><th class="t">Taxi</th></tr></thead><tbody>${filas}</tbody></table>`;
+  const ff = (v,s='')=>v==null?'–':v+s;
+  $('factoresBody').innerHTML = `<table>
+    <tr><td></td><td style="color:var(--patera)">Patera</td><td style="color:var(--taxi)">Taxi</td></tr>
+    <tr><td>Oleaje en la ruta</td><td>${ff(P.fOla,' %')}</td><td>${ff(X.fOla,' %')}</td></tr>
+    <tr><td>Viento en la ruta</td><td>${ff(P.fVto,' %')}</td><td>${ff(X.fVto,' %')}</td></tr>
+    <tr><td>Temporada (${MESES[+d.fecha.slice(5,7)-1]})</td><td>${Math.round(d.temp*100)} %</td><td>${Math.round(d.temp*100)} %</td></tr>
+    <tr><td>Ola máxima encontrada</td><td>${P.peorOla.toFixed(1)} m</td><td>${X.peorOla.toFixed(1)} m</td></tr>
+    <tr><td>Viento máximo</td><td>${Math.round(P.peorV)} kn ${rumboTxt(P.dirV)}</td><td>${Math.round(X.peorV)} kn ${rumboTxt(X.dirV)}</td></tr>
+  </table>`;
+  $('factores').hidden=false;
+}
+
+async function iniciar(forzar){
+  try{
+    await cargar();
+    calcular(); pintar();
+    const ahora=new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/Madrid'});
+    $('estado').textContent=`Previsión actualizada a las ${ahora} · ${DATOS.nO} modelo${DATOS.nO>1?'s':''} de oleaje y ${DATOS.nV} de viento`;
+    if(forzar) toast('Previsión actualizada');
+  }catch(e){
+    let c=null; try{ c=JSON.parse(localStorage.getItem('atalaya_datos')); }catch(_){}
+    if(c&&c.d){
+      DATOS=c.d; calcular(); pintar();
+      const h=new Date(c.t).toLocaleString('es-ES',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+      $('estado').textContent=`Sin conexión: mostrando la previsión del ${h}`;
+    }else{
+      $('estado').textContent='No se pudo descargar la previsión';
+      $('tabla').innerHTML='<div class="cargando">No hay conexión con el servicio de previsión. Comprueba los datos móviles y pulsa «Actualizar previsión».</div>';
+    }
+  }
+}
+$('btnActualizar').onclick=()=>iniciar(true);
+
+/* ---------- Versión y aviso de actualización ---------- */
+$('ver').textContent='v'+APP_VERSION;
+try{
+  const prev=localStorage.getItem('atalaya_ver');
+  if(prev && prev!==APP_VERSION) setTimeout(()=>toast('ATALAYA se ha actualizado',4500),600);
+  localStorage.setItem('atalaya_ver',APP_VERSION);
+}catch(e){}
+
+/* ---------- Instalación ---------- */
+let instalar=null;
+addEventListener('beforeinstallprompt',e=>{e.preventDefault(); instalar=e; $('btnInstalar').hidden=false;});
+$('btnInstalar').onclick=async()=>{ if(!instalar) return; instalar.prompt(); await instalar.userChoice; instalar=null; $('btnInstalar').hidden=true; };
+addEventListener('appinstalled',()=>toast('ATALAYA instalada'));
+
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+iniciar(false);
+</script>
+</body>
+</html>
